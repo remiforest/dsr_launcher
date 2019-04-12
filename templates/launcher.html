@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DSR Launcher</title>
+  <link rel="stylesheet" href="{{url_for('static', filename='jquery-ui.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='bootstrap.min.css')}}">
+  <link rel="stylesheet" href="{{url_for('static', filename='launcher.css')}}">
+</head>
+<body>
+  {% for container in active_containers %}
+  {{container}}
+  <div>
+    <a class="container_link" target="_blank" data-port="{{container.port}}" onclick="javascript:event.target.port={{container.port}}">{{container._id}}</a>
+    <span class="container_status" data-container="{{container._id}}">{{container.status}}</span> 
+    {% if container.status == 'stopped' %}
+      <button class="start_container" data-container="{{container._is}}">Start</button>
+      <button class="delete_container" data-container="{{container._id}}">Delete</button>
+    {% else %}
+      <button class="stop_container" data-container="{{container._id}}">Stop</button>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  <p><p><p>
+  <button id="new_container_button">New Container</button>
+
+</div>
+</body>
+  <script type="text/javascript" src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='jquery-ui.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
+  <script type="text/javascript" src="{{url_for('static', filename='launcher.js')}}"></script>
+</html>
