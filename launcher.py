@@ -168,16 +168,12 @@ def update_containers_status():
         print("checking {} status".format(container["_id"]))
         try:
             content = requests.get("https://127.0.0.1:{}".format(container["port"]),verify=False).content
-            print("###################      CONTENT")
-            print(content)
             if "Zeppelin" in content:
                 launcher_table.update(_id=container["_id"],mutation={"$put":{'status':"running"}})
             if "HTTP ERROR: 503" in content:
                 launcher_table.update(_id=container["_id"],mutation={"$put":{'status':"error"}})
         except Exception as e:
-            print("###################      EXCEPTION")
             msg = traceback.format_exc()
-            print(msg)
             try:
                 if "Connection refused" in msg:
                     launcher_table.update(_id=container["_id"],mutation={"$put":{'status':"stopped"}})
@@ -296,14 +292,7 @@ def refresh_db():
     display_containers()
     return render_template("auth_failed.html",username=username)
 
-def shutdown_server():
-    func = request.environ.get('werkzeug.server.shutdown')
-    if func is None:
-        raise RuntimeError('Not running with the Werkzeug Server')
-    func()
-
 def handler(signal, frame):
-    print("################## KILLLLLLLLLLLLLLLLLLLLLLLLLLL")
     global stop_threads
     global monitoring_thread_active
     global connection_thread_active
@@ -328,7 +317,7 @@ def monitoring_function():
     while not stop_threads:
         init_containers()
         update_containers_status()
-        time.sleep(1)
+        time.sleep(5)
     monitoring_thread_active = False
 
 monitoring_thread = threading.Thread(target=monitoring_function)

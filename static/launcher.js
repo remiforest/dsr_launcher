@@ -5,6 +5,7 @@ var STATUS_TIMER = 5000
 $("#new_container_button").click(function(){
     $("#new_container_button").text("Launching new environment ...");
     $("#new_container_button").attr("disabled", true);
+    $("#new_container_loader").show();
     var username = $("#container_username").val();
     var password = $("#container_password").val();
     $.ajax({

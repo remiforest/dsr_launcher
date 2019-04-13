@@ -1,29 +1,18 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>DSR Launcher Login</title>
-  <link rel="stylesheet" href="{{url_for('static', filename='jquery-ui.css')}}">
-  <link rel="stylesheet" href="{{url_for('static', filename='bootstrap.min.css')}}">
-  <link rel="stylesheet" href="{{url_for('static', filename='launcher.css')}}">
-</head>
-<body>
-  {% if session['logged_in'] %}
-    You're logged in already!
-  {% else %}
-    {% if session.message %} {{session.message}}<p><p> {% endif %}
+{% extends "layout.html" %}
+{% block title %}MapR DSR Manager{% endblock %}
+{% block username %}{% endblock %}
+{% block content %}
+  <div class="offset-md-3 col-md-6" id="login_menu">
     <form action="/login" method="POST">
-      <input type="username" name="username" placeholder="Username">
-      <input type="password" name="password" placeholder="Password">
-      <input type="submit" value="Log in">
+      <div class="form-group">
+        <label for="login_username">Login</label>
+        <input type="text" class="form-control" name="username" id="login_username" placeholder="Enter username">
+      </div>
+      <div class="form-group">
+        <label for="login_password">Password</label>
+        <input type="password" class="form-control" name="password" id="login_password" placeholder="Password">
+      </div>
+      <button type="submit" class="btn btn-secondary">Log in</button>
     </form>
-  {% endif %}
   </div>
-</body>
-  <script type="text/javascript" src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
-  <script type="text/javascript" src="{{url_for('static', filename='jquery-ui.js')}}"></script>
-  <script type="text/javascript" src="{{url_for('static', filename='bootstrap.min.js')}}"></script>
-  <script type="text/javascript" src="{{url_for('static', filename='launcher.js')}}"></script>
-</html>
-
+{% endblock %}
