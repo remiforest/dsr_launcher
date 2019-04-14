@@ -1,12 +1,16 @@
 
 var STATUS_TIMER = 5000
 
+
 $("#new_container_button").click(function(){
-    $("#new_container_button").text("Starting new environment ...");
+    $("#new_container_button").text("Launching new environment ...");
     $("#new_container_button").attr("disabled", true);
+    var username = $("#container_username").val();
+    var password = $("#container_password").val();
     $.ajax({
         url: 'new_container',
         type: 'post',
+        data: {"username":username,"password":password},
         success:function(data){
             console.log(data);
             window.location.reload();
@@ -86,4 +90,19 @@ $( document ).ready(function() {
         $(this).attr("href", "https://" + hostname + ":" + $(this).data("port"));
     })
     check_status();
+})
+
+
+$("#reset_button").click(function(){
+    console.log("reseting application");
+    $(this).text("Resetting application ...");
+    $(this).attr("disabled", true);
+    $.ajax({
+        url: 'reset',
+        type: 'post',
+        success:function(data){
+            console.log(data);
+            window.location.reload();      
+        }
+    });
 })
