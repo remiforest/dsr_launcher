@@ -205,7 +205,7 @@ def clean_database():
     logging.info("Deleting all containers in database")
     for container in launcher_table.find():
         launcher_table.delete(_id=container["_id"])
-        logging.info("{} deleted").format(container["_id"])
+        logging.info("{} deleted".format(container["_id"]))
 
 
 # Reset application : Stops and deletes all containers
