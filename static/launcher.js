@@ -1,5 +1,5 @@
 
-var STATUS_TIMER = 1000
+var STATUS_TIMER = 5000
 var offset = $("#now").data("now")*1000 - new Date().getTime();
 
 $("#new_container_button").click(function(){

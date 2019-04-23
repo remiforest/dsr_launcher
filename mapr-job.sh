@@ -6,7 +6,7 @@ source /opt/mapr/docker/start-env.sh
 MCS_PORT=${MCS_PORT:-8443}
 MCS_URL="https://${MCS_HOST}:${MCS_PORT}"
 echo ""
-echo "MapR JOB script executing for demo, Centralized Historian."
+echo "MapR JOB script executing for DSR manager demo."
 echo ""
 chk_str="Waiting ..."
 # Check that the CLDB is up and running.
@@ -28,7 +28,12 @@ echo "CLDB Master is ready, continuing startup for $MAPR_CLUSTER ..."
 # YOUR DEMO CODE STARTS HERE
 # Put your customer demo stuff below this line to continue to be executed or in the "demo" directory under customer-jobs.sh
 
-# Updates password
+# Install prerequisites
+sudo ./prereqs.sh
+
+# Updates configuration
+
+sed -i 's/CLUSTER_IP = "10.0.0.11"/CLUSTER_IP = "mapr-cldb"/g' launcher.py
 sed -i 's/db_password = "mapr"/db_password = "maprmapr"/g' launcher.py
 
 # Starts the dsr manager

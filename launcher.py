@@ -10,7 +10,7 @@ Starts, stops and configures DSR containers
 
 import subprocess
 import requests
-import threading
+import threadingn
 import time
 import pam
 import sys
@@ -18,6 +18,7 @@ import signal
 import traceback
 import logging
 import hashlib
+import socket
 
 from flask import Flask, render_template, request, Response, flash, redirect, url_for, session
 from mapr.ojai.storage.ConnectionFactory import ConnectionFactory
@@ -31,7 +32,7 @@ logging.basicConfig(filename="launcher.log",
                     datefmt='%Y-%m-%d %H:%M:%S')
 
 
-CLUSTER_IP = "10.0.0.11"
+CLUSTER_IP = "10.0.0.11" # comma separated list
 db_username = "mapr"
 db_password = "mapr"
 PEM_FILE = ""
@@ -40,8 +41,9 @@ SECURE_MODE = False
 LAUNCHER_TABLE = "/dsr_launcher/launcher_table"
 MAPR_CLUSTER = "demo.mapr.com"
 NOTEBOOKS_FOLDER = "/notebooks"
-HOST_IP = "10.0.0.11"
-CONTAINER_BASE_NAME = "dsr" # model = dsr_username_portnum
+
+HOST_IP = socket.gethostbyname(socket.gethostname())
+CONTAINER_BASE_NAME = "dsr"
 
 
 STARTING_PORT = 9995
@@ -110,7 +112,7 @@ def create_dsr(port,owner,username,password):
                          '-e','LIVY_RSC_PORT_RANGE="{}~{}"'.format(LIVY_START,LIVY_END),
                          '-p','{}-{}:13011-13021'.format(SPARK_START,SPARK_END),
                          '-e','SPARK_PORT_RANGE="{}~{}"'.format(SPARK_START,SPARK_END),
-                         '-e','HOST_IP=' + HOST_IP,
+                         '-e','HOST_IP=' + "localhost",
                          '-e','MAPR_CLUSTER=' + MAPR_CLUSTER,
                          '-e','MAPR_CLDB_HOSTS=' + CLUSTER_IP,
                          '-e','MAPR_CONTAINER_USER=' + username,    # the user under which the container will run
@@ -171,11 +173,15 @@ def list_containers(owner=False):
 
 # Updates the status of the containers
 def update_containers_status():
+    global launcher_table
     try:
         logging.info("updating containers status")
-        for container in launcher_table.find():
+        for container in list_containers():
             logging.info("checking {} status".format(container["_id"]))
-            status = "unknown"
+            status = "starting"
+            for line in subprocess.check_output(['docker', 'ps','-a']).decode('utf-8').strip().split('\n')[1:]:
+                if container["_id"] and "Exited" in line:
+                        status = "stopped"
             try:
                 content = requests.get("https://127.0.0.1:{}".format(container["port"]),verify=False).content
                 if "Zeppelin" in content:
@@ -184,18 +190,15 @@ def update_containers_status():
                     status = "error"
             except Exception as e:
                 msg = traceback.format_exc()
-                try:
-                    if "Connection refused" in msg:
-                        status = "stopped"
-                    if "bad handshake" in msg:
-                        status = "starting"
-                except:
-                    pass
+                logging.error(msg)
             launcher_table.update(_id=container["_id"],mutation={"$put":{'status':status}})
             logging.info("{} status : {}".format(container["_id"],status))
     except Exception as e:
+        logging.info( traceback.format_exc())
         if "STATUS_TOKEN_EXPIRED" in traceback.format_exc():
-            print("CAAAAAAAAAAAAAAAAAATECHED")
+            logging.info("Resetting connection")
+            connection = ConnectionFactory().get_connection(connection_str=connection_str)
+            launcher_table = connection.get_or_create_store(LAUNCHER_TABLE)
 
 
 
@@ -352,10 +355,8 @@ monitoring_thread.start()
 
 
 
-try:
-    app.run(debug=True,host='0.0.0.0',port=80)
-except:
-    subprocess.call(['./clean.sh'])
+app.run(debug=True,host='0.0.0.0',port=80)
+
 
 
 
