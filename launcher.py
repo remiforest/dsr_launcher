@@ -32,6 +32,13 @@ logging.basicConfig(filename="launcher.log",
                     datefmt='%Y-%m-%d %H:%M:%S')
 
 
+def get_cluster_name():
+    """ returns the name of the first configured cluster in mapr-clusters.conf """
+    with open('/opt/mapr/conf/mapr-clusters.conf', 'r') as f:
+        first_line = f.readline()
+        return first_line.split(' ')[0]
+
+
 CLUSTER_IP = "10.0.0.11" # comma separated list
 db_username = "mapr"
 db_password = "mapr"
@@ -39,8 +46,9 @@ PEM_FILE = ""
 SECURE_MODE = False
 
 LAUNCHER_TABLE = "/dsr_launcher/launcher_table"
-MAPR_CLUSTER = "demo.mapr.com"
+MAPR_CLUSTER = get_cluster_name()
 NOTEBOOKS_FOLDER = "/notebooks"
+
 
 HOST_IP = socket.gethostbyname(socket.gethostname())
 CONTAINER_BASE_NAME = "dsr"

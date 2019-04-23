@@ -38,7 +38,7 @@ sed -i 's/db_password = "mapr"/db_password = "maprmapr"/g' launcher.py
 sed -i 's/LAUNCHER_TABLE = "\/dsr_launcher\/launcher_table"/LAUNCHER_TABLE = "\/launcher_table"/g' launcher.py
 
 # Starts the dsr manager
-python launcher.py
+sudo python launcher.py
 
 
 # You should always end with a good exit :)
