@@ -33,8 +33,9 @@ sudo ./prereq.sh
 
 # Updates configuration
 
-sed -i 's/CLUSTER_IP = "10.0.0.11"/CLUSTER_IP = "mapr-cldb"/g' launcher.py
+sed -i 's/CLUSTER_IP = "10.0.0.11"/CLUSTER_IP = "dag"/g' launcher.py
 sed -i 's/db_password = "mapr"/db_password = "maprmapr"/g' launcher.py
+sed -i 's/LAUNCHER_TABLE = "\/dsr_launcher\/launcher_table"/LAUNCHER_TABLE = "\/launcher_table"/g' launcher.py
 
 # Starts the dsr manager
 python launcher.py
