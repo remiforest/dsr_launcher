@@ -29,7 +29,7 @@ echo "CLDB Master is ready, continuing startup for $MAPR_CLUSTER ..."
 # Put your customer demo stuff below this line to continue to be executed or in the "demo" directory under customer-jobs.sh
 
 # Install prerequisites
-sudo ./prereqs.sh
+sudo ./prereq.sh
 
 # Updates configuration
 
